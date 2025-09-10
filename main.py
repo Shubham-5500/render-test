@@ -18,10 +18,25 @@ def home():
 
 @app.get("/data")
 def get_data():
-    sample_data = {
+    sample_data = [{
         "city": "Delhi",
         "temperature": 32,
         "status": "Sunny",
         "aqi": 120
-    }
+    },{
+        "city": "Delhi",
+        "temperature": 32,
+        "status": "Sunny",
+        "aqi": 120
+    },{
+        "city": "Delhi",
+        "temperature": 32,
+        "status": "Sunny",
+        "aqi": 120
+    },{
+        "city": "Delhi",
+        "temperature": 32,
+        "status": "Sunny",
+        "aqi": 120
+    }],
     return sample_data
