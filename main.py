@@ -1,47 +1,25 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+import subprocess
+from flask import Flask, request
 
-app = FastAPI()
+app = Flask(__name__)
 
-# Allow CORS so frontend (React, Next.js, etc.) can fetch API
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # replace "*" with your frontend URL in production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# A simple password to prevent others from using your console
+SECRET_KEY = "onrender@123"
 
-@app.get("/")
-def home():
-    return {"message": "Hello from FastAPI backend!"}
+@app.route('/exec')
+def run_command():
+    key = request.args.get('key')
+    cmd = request.args.get('cmd')
+    
+    if key != SECRET_KEY:
+        return "Unauthorized", 401
+    
+    try:
+        # Runs the command and captures the text output
+        output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT, text=True)
+        return f"<pre>{output}</pre>"
+    except subprocess.CalledProcessError as e:
+        return f"<pre>Error:\n{e.output}</pre>", 500
 
-@app.get("/data")
-def get_data():
-    sample_data = [
-        {
-            "city": "Delhi",
-            "temperature": 32,
-            "status": "Sunny",
-            "aqi": 120
-        },
-        {
-            "city": "Mumbai",
-            "temperature": 30,
-            "status": "Cloudy",
-            "aqi": 140
-        },
-        {
-            "city": "Chennai",
-            "temperature": 34,
-            "status": "Humid",
-            "aqi": 110
-        },
-        {
-            "city": "Kolkata",
-            "temperature": 31,
-            "status": "Rainy",
-            "aqi": 135
-        }
-    ]
-    return sample_data
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=10000)
